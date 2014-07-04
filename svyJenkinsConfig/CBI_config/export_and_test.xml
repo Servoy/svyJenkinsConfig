@@ -5,6 +5,10 @@
 
     <property file="export_and_test_personal.properties"/>
     <property file="export_and_test.properties"/>
+	
+	<condition property="servoy.workspace.export" value="${INSTRUMENTED_WORKSPACE}" else="${WORKSPACE}">
+        <isset property="instrument_code_for_code_coverage_report"/>
+    </condition>
 
     <!-- this macro is almost identical to the sample export solution target from [developer.dir]/exporter -->
     <macrodef name="export-solution">
@@ -15,7 +19,9 @@
             <!-- now we are ready to start the workspace exporter -->
             <echo level="info" message="Using equinox launcher jar: ${equinox.launcher.jar.location_property}" />
 			<echo level="info" message="export from instrumented workspace ${INSTRUMENTED_WORKSPACE}"/>
-			
+            <echo level="info" message="servoy.workspace.export=${servoy.workspace.export}"/>
+
+        	
             <java   classname="org.eclipse.equinox.launcher.Main"
                     classpathref="equinox.launcher.jar.location"
                     failonerror="#{failOnError}"
