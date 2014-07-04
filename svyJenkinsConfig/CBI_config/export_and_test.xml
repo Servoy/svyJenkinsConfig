@@ -18,9 +18,7 @@
         <sequential>
             <!-- now we are ready to start the workspace exporter -->
             <echo level="info" message="Using equinox launcher jar: ${equinox.launcher.jar.location_property}" />
-			<echo level="info" message="export from instrumented workspace ${INSTRUMENTED_WORKSPACE}"/>
-            <echo level="info" message="servoy.workspace.export=${servoy.workspace.export}"/>
-
+			<echo level="info" message="export solution from workspace ${servoy.workspace.export}"/>
         	
             <java   classname="org.eclipse.equinox.launcher.Main"
                     classpathref="equinox.launcher.jar.location"
@@ -36,7 +34,7 @@
                 <arg value="com.servoy.eclipse.exporter.solution.application" />
 
                 <arg value="-data" />
-                <arg value="${INSTRUMENTED_WORKSPACE}" />
+                <arg value="${servoy.workspace.export}" />
                 <arg value="-s" />
                 <arg value="@{solutionNames}" />
                 <arg value="-o" />

@@ -68,7 +68,7 @@
 		<antcall target="run_report_code_coverage"/>
 	</target>-->
 	
-	<target name="run_report_code_coverage">	  
+	<target name="run_report_code_coverage" if="instrument_code_for_code_coverage_report">	  
 	  <!-- create code coverage report after running mobile client tests-->
 	  <echo level="info" message="creating json report coverage in folder ${REPORT_COVERAGE}"/>
 	  <exec executable="cmd">
