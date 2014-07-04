@@ -10,6 +10,7 @@
 
 	<!-- clean the instrumented workspace -->
 	<target name="clean_instrumented_workspace">
+	  <echo level="info" message="Using antRunner dir: ${antRunner.dir}"/>
 	  <delete dir="${TEMP_INSTRUMENTED_WORKSPACE}"/>
 	  <mkdir dir="${TEMP_INSTRUMENTED_WORKSPACE}"/>		<!-- instrumented files -->		
 	  <delete dir="${REPORT_COVERAGE}"/>
