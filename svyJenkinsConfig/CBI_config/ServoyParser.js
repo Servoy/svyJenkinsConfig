@@ -140,7 +140,8 @@ function readWorkspaceJSFileList() {
 									if (fails_if_instrumentation_fails == "true") {
 										throw new Error('The JS file ' + inFilePath + ' is not instrumented.')
 									} else {
-										console.log('Skipping not instrumented JS file ' + inFilePath + '.') 
+										console.log('Skipping not instrumented JS file ' + inFilePath + '.')
+										return;
 									}
 								}
                                 fs.open(outFilePath, "w", "0666", function (oerr, fd) {
