@@ -58,6 +58,7 @@
 		<arg value="node"/>
 	    <arg value="ServoyIstanbulReport.js"/>
 		<arg value="${REPORT_COVERAGE}"/>
+	  	<arg value="${always_fails_if_instrumentation_fails}"/>
 	  </exec>
 	</target>
 

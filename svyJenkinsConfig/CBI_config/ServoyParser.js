@@ -14,6 +14,12 @@ if(args.length < 2) {
 var WORKSPACE = args[0]	//'svyPayPal_instrumented';
 var TEMP_WORKSPACE = path.resolve(args[1])	//'temp_' + WORKSPACE;
 var WORKSPACE_PATH = path.resolve(WORKSPACE); // path.resolve(__dirname, '..\\..\\..\\..\\') 
+var fails_if_instrumentation_fails = true;
+
+if (args.length > 2) {
+	fails_if_instrumentation_fails = args[2]
+	console.log('FAIL IF INSTRUMENTATION FAILS ' + fails_if_instrumentation_fails)
+}
 
 console.log('WORKSPACE_PATH: ' + WORKSPACE_PATH)
 console.log('dir ' + __dirname);
@@ -131,7 +137,11 @@ function readWorkspaceJSFileList() {
 									parsedContent = parseData(data)
 									buffer = new Buffer(parsedContent)
 								} catch (e) {
-									throw new Error('The JS file ' + inFilePath + ' is not instrumented.')
+									if (fails_if_instrumentation_fails == "true") {
+										throw new Error('The JS file ' + inFilePath + ' is not instrumented.')
+									} else {
+										console.log('Skipping not instrumented JS file ' + inFilePath + '.') 
+									}
 								}
                                 fs.open(outFilePath, "w", "0666", function (oerr, fd) {
                                         if (oerr) {
