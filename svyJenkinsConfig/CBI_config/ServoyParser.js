@@ -132,18 +132,20 @@ function readWorkspaceJSFileList() {
 								// console.log('read ' + inFilePath)								
 								var parsedContent;
 								var buffer;
-
+								
 								try {
 									parsedContent = parseData(data)
-									buffer = new Buffer(parsedContent)
+									
 								} catch (e) {
 									if (fails_if_instrumentation_fails == "true") {
 										throw new Error('The JS file ' + inFilePath + ' is not instrumented.')
 									} else {
 										console.log('Skipping not instrumented JS file ' + inFilePath + '.')
-										return;
+										parsedContent = data;
 									}
 								}
+								buffer = new Buffer(parsedContent);
+								
                                 fs.open(outFilePath, "w", "0666", function (oerr, fd) {
                                         if (oerr) {
 										        throw new Error(oerr)
