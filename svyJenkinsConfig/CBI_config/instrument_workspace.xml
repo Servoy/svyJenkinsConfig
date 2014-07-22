@@ -48,6 +48,7 @@
 	    <arg value="ServoyParser.js"/>
 	    <arg value="${INSTRUMENTED_WORKSPACE}"/>
 	    <arg value="${TEMP_INSTRUMENTED_WORKSPACE}"/>
+	  	<arg value="${smart_test_solutions}"/>     
 	  </exec>
 	</target>
 	

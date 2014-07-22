@@ -14,7 +14,11 @@ if(args.length < 2) {
 var WORKSPACE = args[0]	//'svyPayPal_instrumented';
 var TEMP_WORKSPACE = path.resolve(args[1])	//'temp_' + WORKSPACE;
 var WORKSPACE_PATH = path.resolve(WORKSPACE); // path.resolve(__dirname, '..\\..\\..\\..\\') 
+var SMART_SOLUTIONS = args[2]
 var fails_if_instrumentation_fails = true;
+
+console.log('Smart Solutions ' + args[2])
+return;
 
 if (args.length > 2) {
 	fails_if_instrumentation_fails = args[2]
