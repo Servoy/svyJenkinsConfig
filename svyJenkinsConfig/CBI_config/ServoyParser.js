@@ -17,8 +17,7 @@ var WORKSPACE_PATH = path.resolve(WORKSPACE); // path.resolve(__dirname, '..\\..
 var SMART_SOLUTIONS = args[2]
 var fails_if_instrumentation_fails = true;
 
-console.log('Smart Solutions ' + args[2])
-return;
+console.log('SMART SOLUTION ' + args[2])
 
 if (args.length > 2) {
 	fails_if_instrumentation_fails = args[2]
@@ -28,6 +27,8 @@ if (args.length > 2) {
 console.log('WORKSPACE_PATH: ' + WORKSPACE_PATH)
 console.log('dir ' + __dirname);
 var workspaceFilesJS = [];		// the list of js files in workspace
+var smart_solution_path;
+
 
 // 1 get all js files in directory.
 getFilesRecursiveSync(TEMP_WORKSPACE, workspaceFilesJS, isFileTypeJavascript);
@@ -35,7 +36,11 @@ getFilesRecursiveSync(TEMP_WORKSPACE, workspaceFilesJS, isFileTypeJavascript);
 // 2 edit all js files in directory.
 var ticketNumber = workspaceFilesJS.length			// Method are async. get ticket to read next file.
 var fileToParseSize = workspaceFilesJS.length;		// Number of file to be still written.
-var writeStream = fs.createWriteStream(WORKSPACE_PATH + '\\istanbul_scope.js', { flags: 'a', encoding: 'utf-8', mode: 0666 })
+
+if (!smart_solution_path) {
+	throw new Error('cannot find test solution')
+}
+var writeStream = fs.createWriteStream(smart_solution_path + '\\istanbul_scope.js', { flags: 'a', encoding: 'utf-8', mode: 0666 })
 readWorkspaceJSFileList();
 
 /**
@@ -71,7 +76,12 @@ function getFilesRecursiveSync(dir, fileList, optionalFilterFunction) {
 		}
         var filePath = dir + '\\' + files[i];
         if (fs.statSync(filePath).isDirectory()) {		// search files in directory
-		    if (filePath.substring(filePath.length-5, filePath.length) == '_test') {	// skip _test directories
+        	// find the path to the test solution
+			if (files[i] == SMART_SOLUTIONS) {
+				smart_solution_path = filePath
+				console.log('SMART SOLUTION ' + smart_solution_path)
+			}
+        	if (filePath.substring(filePath.length-5, filePath.length) == '_test') {	// skip _test directories
 				continue;
 			}
             getFilesRecursiveSync(filePath, fileList, optionalFilterFunction);
