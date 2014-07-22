@@ -29,6 +29,9 @@ var workspaceFilesJS = [];		// the list of js files in workspace
 getFilesRecursiveSync(TEMP_WORKSPACE, workspaceFilesJS, isFileTypeJavascript);
 
 // 2 edit all js files in directory.
+var ticketNumber = workspaceFilesJS.length			// Method are async. get ticket to read next file.
+var fileToParseSize = workspaceFilesJS.length;		// Number of file to be still written.
+var writeStream = fs.createWriteStream(WORKSPACE_PATH + '\\istanbul_scope.js', { flags: 'a', encoding: 'utf-8', mode: 0666 })
 readWorkspaceJSFileList();
 
 /**
@@ -114,9 +117,17 @@ function readWorkspaceJSFileList() {
 */
 
 function readWorkspaceJSFileList() {
-                if (!workspaceFilesJS.length) {
-                        return
+				
+				ticketNumber -= 1;
+				console.log('ticket ' + ticketNumber)
+                if (ticketNumber < 0) {
+						// no more file to be processed
+                        return;
                 }
+				var inFilePath = workspaceFilesJS.shift();
+				if (!inFilePath) {
+					throw new Error('Cannot parse file undefined')
+				}
 
                 var inFilePath = workspaceFilesJS.shift();
                 var outFilePath = WORKSPACE_PATH + inFilePath.substring(TEMP_WORKSPACE.length) + '';
@@ -129,23 +140,44 @@ function readWorkspaceJSFileList() {
                                         throw new Error(err)
 										//return console.log(err)
                                 }
+                                
 								// console.log('read ' + inFilePath)								
-								var parsedContent;
-								var buffer;
+								var extractedContent, parsedContent;
+								var buffer, fileBuffer;
 								
+								// 1 parse the file content
 								try {
-									parsedContent = parseData(data)
-									
+	                                extractedContent = extractInstrumentedData(data)
+									parsedContent = removeInstrumentedData(data)
 								} catch (e) {
 									if (fails_if_instrumentation_fails == "true") {
 										throw new Error('The JS file ' + inFilePath + ' is not instrumented.')
 									} else {
 										console.log('Skipping not instrumented JS file ' + inFilePath + '.')
 										parsedContent = data;
+										extractedContent = "";
 									}
 								}
-								buffer = new Buffer(parsedContent);
 								
+								buffer = new Buffer(extractedContent)
+								fileBuffer = new Buffer(parsedContent);
+								
+								// 2 write the instrumented variables in a scope file.
+								writeStream.write(buffer, 'utf-8', function (werr) {
+									if(werr) {
+                                            console.log('ERROR WRITING THE FILE ' + werr);
+                                    }
+                                    console.log('write ')
+									// the last file being parsed should close the writeStrem
+									fileToParseSize -=1
+									if (fileToParseSize == 0) {
+										// TODO close file
+										console.log('Close the writeStream')
+										writeStream.end('')
+									}				
+								})
+
+								// 3 write the file in the output directory.
                                 fs.open(outFilePath, "w", "0666", function (oerr, fd) {
                                         if (oerr) {
 										        throw new Error(oerr)
@@ -153,7 +185,7 @@ function readWorkspaceJSFileList() {
                                                 //return;
                                         }
                                         // console.log('open ' + outFilePath)
-                                        fs.write(fd, buffer, 0, buffer.length,null, function (werr) {
+                                        fs.write(fd, fileBuffer, 0, fileBuffer.length,null, function (werr) {
                                                 if(werr) {
 													throw new Error(werr)
                                                     // console.log('ERROR WRITING THE FILE ' + wErr);
@@ -176,22 +208,62 @@ function readWorkspaceJSFileList() {
                         });
 }
 
-
 /** 
- * parse the content of the file. Return the parsed content.
+ * extract the instrumented variables from the file
  */
-function parseData(data) { 
+function extractInstrumentedData(data) { 
+
 	if (data.substring(0, 11) == '\nvar __cov_' && data.search('__coverage__') != -1) {
+		var index = data.indexOf("/*")
+		
+		var extractedData = data.slice(0, index)
+		
 		var LEFT_CONTENT = "if (!__";
 		var RIGHT_CONTENT = "/*"
-		var parsedData = data;
-		parsedData = parsedData.replace(RIGHT_CONTENT, "})();\n" + RIGHT_CONTENT);
-		parsedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + parsedData;
-		parsedData = parsedData.replace(LEFT_CONTENT, '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nvar istanbul_init = (function (){ application.output("running istanbul code"); ' + LEFT_CONTENT)
-		return parsedData
+		//extractedData = extractedData.replace(RIGHT_CONTENT, "})();\n" + RIGHT_CONTENT);
+		extractedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + extractedData;
+		extractedData = extractedData.replace(LEFT_CONTENT, '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nvar istanbul_init = (function (){ application.output("running istanbul code"); ' + LEFT_CONTENT)
+		extractedData = extractedData + "})();\n\n";
+		return extractedData
 	} else {
-		// console.log('ServoyParser requires input directory and output directory as arguments.')
-		throw new Error('File not instrumented')
+		// TODO argument to throw exception when file not instrumented.
+		// throw new Error('File not instrumented')
+	}
+	return ""
+	
+}
+
+
+/** 
+ * parse the content of the file. Remove the instrumented variables and return the parsed content.
+ */
+function removeInstrumentedData(data) { 
+
+	if (data.substring(0, 11) == '\nvar __cov_' && data.search('__coverage__') != -1) {
+		var RIGHT_CONTENT = "/*"
+		// remove the instrumented code on top of each file
+		return data.substring(data.indexOf(RIGHT_CONTENT), data.length)
+	} else {
+		// TODO argument to throw exception when file not instrumented.
+		// throw new Error('File not instrumented')
 	}
 	return data;
 }
+
+///** 
+// * parse the content of the file. Return the parsed content.
+// */
+//function parseData(data) { 
+//	if (data.substring(0, 11) == '\nvar __cov_' && data.search('__coverage__') != -1) {
+//		var LEFT_CONTENT = "if (!__";
+//		var RIGHT_CONTENT = "/*"
+//		var parsedData = data;
+//		parsedData = parsedData.replace(RIGHT_CONTENT, "})();\n" + RIGHT_CONTENT);
+//		parsedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + parsedData;
+//		parsedData = parsedData.replace(LEFT_CONTENT, '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nvar istanbul_init = (function (){ application.output("running istanbul code"); ' + LEFT_CONTENT)
+//		return parsedData
+//	} else {
+//		throw new Error('File not instrumented')
+//	}
+//	return data;
+//}
