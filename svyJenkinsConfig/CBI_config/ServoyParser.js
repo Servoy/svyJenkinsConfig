@@ -174,8 +174,8 @@ function readWorkspaceJSFileList() {
 									}
 								}
 								
-								if (fileToParseSize==1) {
-									var endOfFile = '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nfunction initIstanbul() {application.output("init success")}'
+								if (fileToParseSize == 1) {
+									var endOfFile = '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nfunction initIstanbul() {application.output("init success")}\n'
 									extractedContent = extractedContent + endOfFile;
 								}
 								
@@ -193,9 +193,20 @@ function readWorkspaceJSFileList() {
 									fileToParseSize -=1
 									if (fileToParseSize == 0) {
 										// TODO close file
-										console.log('Close the writeStream')
+										//console.log('Close the writeStream')
 										//var endOfFile = '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nfunction initIstanbul() {application.output("init success")}'
-										writeStream.end('')
+										//writeStream.end('')
+										console.log('Attempt to close the writeStream')
+										var endOfFile = '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nfunction initIstanbul() {application.output("init success")}'
+										var endBuffer = new Buffer(endOfFile)
+										writeStream.write(endBuffer, 'utf-8', function (werr) {
+											if(werr) {
+													console.log('ERROR WRITING THE FILE ' + werr);
+											}
+											console.log('Close the writeStream')
+											writeStream.end('')
+
+										});
 									}				
 								})
 
