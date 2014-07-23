@@ -174,7 +174,7 @@ function readWorkspaceJSFileList() {
 									}
 								}
 								
-								if (ticketNumber==0) {
+								if (fileToParseSize==1) {
 									var endOfFile = '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nfunction initIstanbul() {application.output("init success")}'
 									extractedContent = extractedContent + endOfFile;
 								}
