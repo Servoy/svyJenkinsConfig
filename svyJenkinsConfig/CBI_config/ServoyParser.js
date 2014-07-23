@@ -237,7 +237,8 @@ function extractInstrumentedData(data) {
 		var RIGHT_CONTENT = "/*"
 		//extractedData = extractedData.replace(RIGHT_CONTENT, "})();\n" + RIGHT_CONTENT);
 		extractedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + extractedData;
-		extractedData = extractedData.replace(LEFT_CONTENT, '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nvar istanbul_init = (function (){ application.output("running istanbul code"); ' + LEFT_CONTENT)
+		var methodID = generateUUID()
+		extractedData = extractedData.replace(LEFT_CONTENT, '\n/**\n * @properties={typeid:35,uuid:"' + methodID.substr(0,8) + '"} \n */\nvar istanbul_init_'+ methodID +' = (function (){ application.output("running istanbul code"); ' + LEFT_CONTENT)
 		extractedData = extractedData + "})();\n\n";
 		return extractedData
 	} else {
