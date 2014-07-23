@@ -155,7 +155,6 @@ function readWorkspaceJSFileList() {
 		throw new Error('Cannot parse file undefined')
 	}
 
-	var inFilePath = workspaceFilesJS.shift();
 	var outFilePath = WORKSPACE_PATH + inFilePath.substring(TEMP_WORKSPACE.length) + '';
 	console.log('processing file: ' + outFilePath);
 
