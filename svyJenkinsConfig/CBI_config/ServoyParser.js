@@ -250,36 +250,38 @@ function extractInstrumentedData(data) {
 }
 
 
-/** 
- * parse the content of the file. Remove the instrumented variables and return the parsed content.
- */
-function removeInstrumentedData(data) { 
-
-	if (data.substring(0, 11) == '\nvar __cov_' && data.search('__coverage__') != -1) {
-		var RIGHT_CONTENT = "/*"
-		// remove the instrumented code on top of each file
-		return data.substring(data.indexOf(RIGHT_CONTENT), data.length)
-	} else {
-		// TODO argument to throw exception when file not instrumented.
-		// throw new Error('File not instrumented')
-	}
-	return data;
-}
-
 ///** 
-// * parse the content of the file. Return the parsed content.
+// * parse the content of the file. Remove the instrumented variables and return the parsed content.
 // */
-//function parseData(data) { 
+//function removeInstrumentedData(data) { 
+//
 //	if (data.substring(0, 11) == '\nvar __cov_' && data.search('__coverage__') != -1) {
-//		var LEFT_CONTENT = "if (!__";
 //		var RIGHT_CONTENT = "/*"
-//		var parsedData = data;
-//		parsedData = parsedData.replace(RIGHT_CONTENT, "})();\n" + RIGHT_CONTENT);
-//		parsedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + parsedData;
-//		parsedData = parsedData.replace(LEFT_CONTENT, '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nvar istanbul_init = (function (){ application.output("running istanbul code"); ' + LEFT_CONTENT)
+//		// remove the instrumented code on top of each file
+//		var parsedData = data.substring(data.indexOf(RIGHT_CONTENT), data.length)
+//		//parsedData = string.replace(/__cov_/g, 'scopes.istanbul_scope.__cov_')
 //		return parsedData
 //	} else {
-//		throw new Error('File not instrumented')
+//		// TODO argument to throw exception when file not instrumented.
+//		// throw new Error('File not instrumented')
 //	}
 //	return data;
 //}
+
+/** 
+ * parse the content of the file. Return the parsed content.
+ */
+function removeInstrumentedData(data) { 
+	if (data.substring(0, 11) == '\nvar __cov_' && data.search('__coverage__') != -1) {
+		var LEFT_CONTENT = "if (!__";
+		var RIGHT_CONTENT = "/*"
+		var parsedData = data;
+		parsedData = parsedData.replace(RIGHT_CONTENT, "})();\n" + RIGHT_CONTENT);
+		parsedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + parsedData;
+		parsedData = parsedData.replace(LEFT_CONTENT, '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nvar istanbul_init = (function (){ application.output("running istanbul code"); ' + LEFT_CONTENT)
+		return parsedData
+	} else {
+		throw new Error('File not instrumented')
+	}
+	return data;
+}
