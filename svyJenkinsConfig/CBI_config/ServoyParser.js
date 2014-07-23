@@ -96,6 +96,10 @@ function getFilesRecursiveSync(dir, fileList, optionalFilterFunction) {
 			if (filePath.substring(filePath.length - 5, filePath.length) == '_test') { // skip _test directories
 				continue;
 			}
+			if (filePath.substr(filePath.length - 13, filePath.length) == 'JenkinsConfig') { // skip jenkins config
+				console.log(filePath.substr(filePath.length - 13, filePath.length))
+				continue;
+			}
 			getFilesRecursiveSync(filePath, fileList, optionalFilterFunction);
 		} else if (fs.statSync(filePath).isFile()) {
 			if (optionalFilterFunction && optionalFilterFunction(filePath) !== true) // filter .js files only
