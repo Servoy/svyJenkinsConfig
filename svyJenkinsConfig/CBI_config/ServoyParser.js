@@ -41,7 +41,7 @@ if (!smart_solution_path) {
 }
 var writeStream = fs.createWriteStream(smart_solution_path + '\\istanbul_scope.js', { flags: 'a', encoding: 'utf-8', mode: 0666 })
 
-var endOfFile = '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nfunction initIstanbul() {application.output("init success")}'
+var endOfFile = '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nfunction initIstanbul() {application.output("init success")}\n'
 var endBuffer = new Buffer(endOfFile)
 
 // write init function in istanbul file
