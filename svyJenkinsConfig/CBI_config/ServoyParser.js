@@ -184,11 +184,6 @@ function readWorkspaceJSFileList() {
 				}
 			}
 
-			if (fileToParseSize == 1) {
-				var endOfFile = '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nfunction initIstanbul() {application.output("init success")}\n'
-				extractedContent = extractedContent + endOfFile;
-			}
-
 			buffer = new Buffer(extractedContent)
 			fileBuffer = new Buffer(parsedContent);
 
