@@ -78,7 +78,7 @@ function getFilesRecursiveSync(dir, fileList, optionalFilterFunction) {
         if (fs.statSync(filePath).isDirectory()) {		// search files in directory
         	// find the path to the test solution
 			if (files[i] == SMART_SOLUTIONS) {
-				smart_solution_path = filePath
+				smart_solution_path = WORKSPACE_PATH + '\\' +  files[i]
 				console.log('SMART SOLUTION ' + smart_solution_path)
 			}
         	if (filePath.substring(filePath.length-5, filePath.length) == '_test') {	// skip _test directories
