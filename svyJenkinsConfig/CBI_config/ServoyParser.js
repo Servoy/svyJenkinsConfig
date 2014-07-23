@@ -174,6 +174,12 @@ function readWorkspaceJSFileList() {
 									}
 								}
 								
+								if (ticketNumber==0) {
+									var endOfFile = '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nfunction initIstanbul() {application.output("init success")}'
+									extractedContent = extractedContent + endOfFile;
+								}
+								
+								
 								buffer = new Buffer(extractedContent)
 								fileBuffer = new Buffer(parsedContent);
 								
@@ -188,8 +194,8 @@ function readWorkspaceJSFileList() {
 									if (fileToParseSize == 0) {
 										// TODO close file
 										console.log('Close the writeStream')
-										var endOfFile = '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nfunction initIstanbul() {application.output("init success")}'
-										writeStream.end(endOfFile)
+										//var endOfFile = '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nfunction initIstanbul() {application.output("init success")}'
+										writeStream.end('')
 									}				
 								})
 
