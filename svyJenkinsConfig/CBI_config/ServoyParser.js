@@ -188,6 +188,7 @@ function readWorkspaceJSFileList() {
 									if (fileToParseSize == 0) {
 										// TODO close file
 										console.log('Close the writeStream')
+										var endOfFile = '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nfunction initIstanbul() {application.output("init success")}'
 										writeStream.end('')
 									}				
 								})
