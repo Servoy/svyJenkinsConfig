@@ -1,3 +1,4 @@
+// require node libraries
 var fs = require('fs');
 var readline = require('readline');
 var stream = require('stream');
@@ -6,15 +7,15 @@ var util = require('util');
 var Transform = stream.Transform || require('readable-stream').Transform;
 
 var args = process.argv.slice(2);
-if (args.length < 2) {
+if (args.length < 3) {
 	// console.log('ServoyParser requires input directory and output directory as arguments.')
-	throw new Error('ServoyParser requires input directory and output directory as arguments.')
+	throw new Error('ServoyParser requires 3 arguments: input directory output directory and test solution name')
 }
 
-var WORKSPACE = args[0] //'svyPayPal_instrumented';
-var TEMP_WORKSPACE = path.resolve(args[1]) //'temp_' + WORKSPACE;
-var WORKSPACE_PATH = path.resolve(WORKSPACE); // path.resolve(__dirname, '..\\..\\..\\..\\')
-var SMART_SOLUTIONS = args[2]
+var WORKSPACE = args[0]
+var TEMP_WORKSPACE = path.resolve(args[1])			// input directory to parse the file.
+var WORKSPACE_PATH = path.resolve(WORKSPACE); 		// ouput directory for the parsed file.
+var SMART_SOLUTIONS = args[2]						// name of the test solution.
 var fails_if_instrumentation_fails = true;
 
 console.log('SMART SOLUTION ' + args[2])
@@ -98,6 +99,9 @@ function getFilesRecursiveSync(dir, fileList, optionalFilterFunction) {
 			}
 			if (filePath.substr(filePath.length - 13, filePath.length) == 'JenkinsConfig') { // skip jenkins config
 				console.log(filePath.substr(filePath.length - 13, filePath.length))
+				continue;
+			}
+			if (files[i]=='medias') {	// skip files in medias folder.
 				continue;
 			}
 			getFilesRecursiveSync(filePath, fileList, optionalFilterFunction);
@@ -292,9 +296,16 @@ function removeInstrumentedData(data) {
 		var LEFT_CONTENT = "if (!__";
 		var RIGHT_CONTENT = "/*"
 		var parsedData = data;
+		//parsedData = parsedData.replace(RIGHT_CONTENT, "})();\n" + RIGHT_CONTENT);
+		//parsedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + parsedData;
+		//parsedData = parsedData.replace(LEFT_CONTENT, '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nvar istanbul_init = (function (){ application.output("running istanbul code"); ' + LEFT_CONTENT)
+		
+		// TODO review rule
 		parsedData = parsedData.replace(RIGHT_CONTENT, "})();\n" + RIGHT_CONTENT);
 		parsedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + parsedData;
 		parsedData = parsedData.replace(LEFT_CONTENT, '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nvar istanbul_init = (function (){ application.output("running istanbul code"); ' + LEFT_CONTENT)
+		
+		
 		return parsedData
 	} else {
 		throw new Error('File not instrumented')
