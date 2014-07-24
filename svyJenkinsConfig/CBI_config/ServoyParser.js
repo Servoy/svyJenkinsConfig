@@ -250,12 +250,12 @@ function readWorkspaceJSFileList() {
 function extractInstrumentedData(data) {
 
 	if (data.substring(0, 11) == '\nvar __cov_' && data.search('__coverage__') != -1) {
-		var index = data.indexOf("/*")
+		var index = data.indexOf(".js'];" + 6)
 
 		var extractedData = data.slice(0, index)
 
 		var LEFT_CONTENT = "if (!__";
-		var RIGHT_CONTENT = "/*"
+		var RIGHT_CONTENT = ".js'];"
 		//extractedData = extractedData.replace(RIGHT_CONTENT, "})();\n" + RIGHT_CONTENT);
 		extractedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + extractedData;
 		var methodID = generateUUID()
