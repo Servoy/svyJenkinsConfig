@@ -293,19 +293,23 @@ function extractInstrumentedData(data) {
  */
 function removeInstrumentedData(data) {
 	if (data.substring(0, 11) == '\nvar __cov_' && data.search('__coverage__') != -1) {
-		var LEFT_CONTENT = "if (!__";
-		var RIGHT_CONTENT = "/*"
-		var parsedData = data;
+		var LEFT_CONTENT = "if (!__cov_";
+		
+		var startIndex = data.indexOf(LEFT_CONTENT)
+		var index = 0; 
+		for (var i=0; i < 4; i++) {
+			index = data.indexOf('.js', index + 1)
+		}
+		
+		var parsedData = data.substring(0, startIndex)
+		parsedData = parsedData + '\n' + data.substring(index + 6, data.length);
+		parsedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + parsedData;
+
+		//var RIGHT_CONTENT = "/*"
+		//var parsedData = data;
 		//parsedData = parsedData.replace(RIGHT_CONTENT, "})();\n" + RIGHT_CONTENT);
 		//parsedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + parsedData;
 		//parsedData = parsedData.replace(LEFT_CONTENT, '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nvar istanbul_init = (function (){ application.output("running istanbul code"); ' + LEFT_CONTENT)
-		
-		// TODO review rule
-		parsedData = parsedData.replace(RIGHT_CONTENT, "})();\n" + RIGHT_CONTENT);
-		parsedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + parsedData;
-		parsedData = parsedData.replace(LEFT_CONTENT, '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nvar istanbul_init = (function (){ application.output("running istanbul code"); ' + LEFT_CONTENT)
-		
-		
 		return parsedData
 	} else {
 		throw new Error('File not instrumented')
