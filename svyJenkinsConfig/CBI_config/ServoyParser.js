@@ -200,7 +200,7 @@ function readWorkspaceJSFileList() {
 					if (werr) {
 						console.log('ERROR WRITING THE FILE ' + werr);
 					}
-					console.log('write ')
+					// console.log('write ')
 					// the last file being parsed should close the writeStrem
 					fileToParseSize -= 1
 					if (fileToParseSize == 0) {
@@ -226,7 +226,7 @@ function readWorkspaceJSFileList() {
 							}
 							// console.log('write ' + outFilePath)
 							fs.close(fd, function() {
-									console.log("completed " + outFilePath)
+									// console.log("completed " + outFilePath)
 								})
 						});
 				});
@@ -250,12 +250,12 @@ function readWorkspaceJSFileList() {
 function extractInstrumentedData(data) {
 
 	if (data.substring(0, 11) == '\nvar __cov_' && data.search('__coverage__') != -1) {
-		var index = data.indexOf(".js'];")
+		var LEFT_CONTENT = "if (!__";
+		var RIGHT_CONTENT = ".js'];"
+		var index = data.indexOf(RIGHT_CONTENT)
 
 		var extractedData = data.slice(0, index + 6)
 
-		var LEFT_CONTENT = "if (!__";
-		var RIGHT_CONTENT = ".js'];"
 		//extractedData = extractedData.replace(RIGHT_CONTENT, "})();\n" + RIGHT_CONTENT);
 		extractedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + extractedData;
 		var methodID = generateUUID()
