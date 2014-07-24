@@ -296,14 +296,14 @@ function removeInstrumentedData(data) {
 		var LEFT_CONTENT = "if (!__cov_";
 		
 		var startIndex = data.indexOf(LEFT_CONTENT)
-//		var index = 0; 
-//		for (var i=0; i < 4; i++) {
-//			index = data.indexOf('.js', index + 1)
-//		}
-		var index = data.indexOf('/*')
+		var index = 0; 
+		for (var i=0; i < 4; i++) {
+			index = data.indexOf('.js', index + 1)
+		}
+		var endIndex = data.indexOf('/*')
 		
-		var parsedData = data.substring(0, startIndex)
-		parsedData = parsedData + '\n' + data.substring(index, data.length);
+		var parsedData = data.substring(0, index + 6)
+		parsedData = parsedData + '\n' + data.substring(endIndex, data.length);
 		parsedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + parsedData;
 
 		//var RIGHT_CONTENT = "/*"
