@@ -259,7 +259,7 @@ function extractInstrumentedData(data) {
 		//extractedData = extractedData.replace(RIGHT_CONTENT, "})();\n" + RIGHT_CONTENT);
 		extractedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + extractedData;
 		var methodID = generateUUID()
-		extractedData = extractedData.replace(LEFT_CONTENT, '\n/**\n * @properties={typeid:35,uuid:"' + methodID + '"} \n */\nvar istanbul_init_' + methodID.substring(0, 8) + ' = (function (){ application.output("running istanbul code"); ' + LEFT_CONTENT)
+		extractedData = extractedData.replace(LEFT_CONTENT, '\n/**\n * @properties={typeid:35,uuid:"' + methodID + '"} \n */\nvar istanbul_init_' + methodID.substring(0, 8) + ' = (function (){ ' + LEFT_CONTENT)
 		extractedData = extractedData + "})();\n\n";
 		return extractedData
 	} else {
@@ -296,13 +296,14 @@ function removeInstrumentedData(data) {
 		var LEFT_CONTENT = "if (!__cov_";
 		
 		var startIndex = data.indexOf(LEFT_CONTENT)
-		var index = 0; 
-		for (var i=0; i < 4; i++) {
-			index = data.indexOf('.js', index + 1)
-		}
+//		var index = 0; 
+//		for (var i=0; i < 4; i++) {
+//			index = data.indexOf('.js', index + 1)
+//		}
+		var index = data.indexOf('/*')
 		
 		var parsedData = data.substring(0, startIndex)
-		parsedData = parsedData + '\n' + data.substring(index + 6, data.length);
+		parsedData = parsedData + '\n' + data.substring(index, data.length);
 		parsedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + parsedData;
 
 		//var RIGHT_CONTENT = "/*"
