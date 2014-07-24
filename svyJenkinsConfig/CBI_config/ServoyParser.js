@@ -294,16 +294,19 @@ function extractInstrumentedData(data) {
 function removeInstrumentedData(data) {
 	if (data.substring(0, 11) == '\nvar __cov_' && data.search('__coverage__') != -1) {
 		var LEFT_CONTENT = "if (!__cov_";
+		var RIGHT_CONTENT = "/*"
 		
 		var startIndex = data.indexOf(LEFT_CONTENT)
 		var index = 0; 
 		for (var i=0; i < 4; i++) {
 			index = data.indexOf('.js', index + 1)
 		}
-		var endIndex = data.indexOf('/*')
+		var endIndex = data.indexOf(RIGHT_CONTENT)
 		
 		var parsedData = data.substring(0, index + 6)
 		parsedData = parsedData + '\n' + data.substring(endIndex, data.length);
+		parsedData = parsedData.replace(RIGHT_CONTENT, "})();\n" + RIGHT_CONTENT);
+		parsedData = parsedData.replace(LEFT_CONTENT, '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nvar istanbul_init = (function (){ application.output("running istanbul code"); ' + LEFT_CONTENT)
 		parsedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + parsedData;
 
 		//var RIGHT_CONTENT = "/*"
