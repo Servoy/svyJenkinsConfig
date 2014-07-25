@@ -55,13 +55,14 @@
 	<!-- attach the onSutionClose to save the coverage.json object -->
 	<target name="servoy_save_coverage_report_at_on_solution_close" if="instrument_code_for_code_coverage_report">
 	  <echo level="info" message="include generated json report into an existing onCloseSolution. Save the report in the ${basedir}/report_coverage"/>
-	  <exec executable="cmd" failonerror="${always_fails_if_instrumentation_fails}">
+	  <echo level='info' message='skipping servoy_save_coverage_report_at_on_solution_close'/>
+		<!--<exec executable="cmd" failonerror="${always_fails_if_instrumentation_fails}">
 	    <arg value="/c"/>
 		<arg value="node"/>
 	    <arg value="ServoyIstanbulReport.js"/>
 		<arg value="${REPORT_COVERAGE}"/>
 	  	<arg value="${always_fails_if_instrumentation_fails}"/>
-	  </exec>
+	  </exec>-->
 	</target>
 
 	
