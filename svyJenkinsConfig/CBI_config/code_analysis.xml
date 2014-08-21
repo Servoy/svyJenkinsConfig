@@ -17,7 +17,7 @@
 	    <arg value="-r"/>
 	    <arg value="-d"/>
 		<arg value="${PLATO_OUTPUT_DIRECTORY}"/>
-	    <arg value='"${PLATO_INPUT_DIRECTORY}"'/>
+	    <arg value="${PLATO_INPUT_DIRECTORY}"/>
 	  </exec>
 	</target>
 </project>
