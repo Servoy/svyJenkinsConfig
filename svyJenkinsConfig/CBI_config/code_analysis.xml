@@ -9,11 +9,11 @@
 	<target name="code_analysis" depends= "execute_plato_for_code_analysis"/>
 	
 	<!-- create a code analysis report using plato-->
-	<target name="execute_plato_for_code_analysis" if="code_analysis_report">
+	<target name="execute_plato_for_code_analysis" if="make_code_analysis_report">
 	  <echo level="info" message="code analysis of ${PLATO_INPUT_DIRECTORY} into output dir ${PLATO_OUTPUT_DIRECTORY}"/>
 	  <exec executable="cmd" failonerror="${always_fails_if_code_analysis_fails}">
 	    <arg value="/c"/>
-		<arg value="plato"/>
+		<arg value="C:/Users/Administrator/plato"/>
 	    <arg value="-r"/>
 	    <arg value="-d"/>
 		<arg value="${PLATO_OUTPUT_DIRECTORY}"/>
