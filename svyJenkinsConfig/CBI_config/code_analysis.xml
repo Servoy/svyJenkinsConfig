@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<!-- Works with Ant 1.7.0 and higher -->
+<project basedir=".">
+
+    <property file="export_and_test_personal.properties"/>
+    <property file="export_and_test.properties"/>
+
+	<target name="code_analysis" depends= "execute_plato_for_code_analysis"/>
+	
+	<!-- create a code analysis report using plato-->
+	<target name="execute_plato_for_code_analysis" if="code_analysis_report">
+	  <echo level="info" message="code analysis of ${PLATO_INPUT_DIRECTORY} into output dir ${PLATO_OUTPUT_DIRECTORY}"/>
+	  <exec executable="cmd" failonerror="${always_fails_if_code_analysis_fails}">
+	    <arg value="/c"/>
+		<arg value="plato"/>
+	    <arg value="-r"/>
+	    <arg value="-d"/>
+		<arg value="${PLATO_OUTPUT_DIRECTORY}"/>
+	    <arg value="${PLATO_INPUT_DIRECTORY}"/>
+	  </exec>
+	</target>
+</project>

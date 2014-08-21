@@ -10,6 +10,7 @@
     </taskdef>
        
     <import file="instrument_workspace.xml"/>
+    <import file="code_analysis.xml"/>
 	<import file="export_and_test.xml"/>
 	
 
@@ -22,7 +23,7 @@
     <!--   - fails the build if any tests or exports failed.   -->
 
     
-    <target name="main_smart" depends="instrument_code, clean_exports, clean_test_results, export_smart_client_solutions, run_smart_client_tests_if_exported_ok, prepare_artifacts"/>
+    <target name="main_smart" depends="instrument_code, code_analysis, clean_exports, clean_test_results, export_smart_client_solutions, run_smart_client_tests_if_exported_ok, prepare_artifacts"/>
     <target name="main_mobile" depends="clean_exports, clean_test_results, export_mobile_client_solutions, run_and_move_mobile_exports_if_tests_passed, prepare_artifacts"/>
 
     <target name="prepare_artifacts">
