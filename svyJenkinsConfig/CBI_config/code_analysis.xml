@@ -11,11 +11,11 @@
 	<!-- create a code analysis report using plato-->
 	<target name="execute_plato_for_code_analysis" if="make_code_analysis_report">
 	  <echo level="info" message="code analysis of ${PLATO_INPUT_DIRECTORY} into output dir ${PLATO_OUTPUT_DIRECTORY}"/>
-		  <exec dir="${WORKSPACE}" executable="cmd" failonerror="${always_fails_if_code_analysis_fails}">
+		  <exec dir="${WORKSPACE}/../" executable="cmd" failonerror="${always_fails_if_code_analysis_fails}">
 		    <arg value="/c"/>
 			<arg value="dir"/>
 		  </exec>
-	  <exec dir="${WORKSPACE}" executable="cmd" failonerror="${always_fails_if_code_analysis_fails}">
+	  <exec dir="${WORKSPACE/../}" executable="cmd" failonerror="${always_fails_if_code_analysis_fails}">
 	    <arg value="/c"/>
 		<arg value="plato"/>
 	    <arg value="-r"/>
