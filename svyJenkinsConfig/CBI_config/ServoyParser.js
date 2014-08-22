@@ -171,9 +171,11 @@ function getFilesRecursiveSync(dir, fileList, optionalFilterFunction) {
 			continue;
 		}
 		if (fs.statSync(filePath).isDirectory()) { 	// search files in directory
+			// TODO remove skip test directories ?
 			if (filePath.substring(filePath.length - 5, filePath.length) == '_test') { // skip _test directories
 				continue;
 			}
+			// TODO remove jenkinsConfig ?
 			if (filePath.substr(filePath.length - 13, filePath.length) == 'JenkinsConfig') { // skip jenkins config
 				console.log(filePath.substr(filePath.length - 13, filePath.length))
 				continue;
