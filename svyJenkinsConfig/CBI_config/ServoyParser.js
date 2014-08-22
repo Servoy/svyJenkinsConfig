@@ -6,24 +6,27 @@ var path = require('path');
 var util = require('util');
 var Transform = stream.Transform || require('readable-stream').Transform;
 
+var HELP = 'ServoyParser arguments\n\
+--h help\n\
+--d <output_dir> <input_dir>\n\
+mandatory argument! Parse file from directory tree <input_dir> and save parsed files in <output_dir> using the same tree structure\n\n\
+--e <true|false>\n\
+when set to true return error if any of the processed file is not instrumented. Default is false\n\n\
+--t <test_solution_name>\n\
+The name of the test solution\n\n\
+--x "<exclude_folder>[,<exclude_folder>]"\n\
+Exclude folders or files. List all files and folder to be excluded in a strin. Use comma to separate folder or file names.\n'
+
+var WORKSPACE
+var TEMP_WORKSPACE								// input directory to parse the file.
+var WORKSPACE_PATH 								// ouput directory for the parsed file.
+var SMART_SOLUTIONS								// name of the test solution.
+var EXCLUDES = {}								// list of files to be excluted
+var FAIL_IF_INSTRUMENTATION_FAIL = false;		// return error if processed file is not instrumented
+
+// process and validate the input arguments
 var args = process.argv.slice(2);
-if (args.length < 3) {
-	// console.log('ServoyParser requires input directory and output directory as arguments.')
-	throw new Error('ServoyParser requires 3 arguments: input directory output directory and test solution name')
-}
-
-var WORKSPACE = args[0]
-var TEMP_WORKSPACE = path.resolve(args[1])			// input directory to parse the file.
-var WORKSPACE_PATH = path.resolve(WORKSPACE); 		// ouput directory for the parsed file.
-var SMART_SOLUTIONS = args[2]						// name of the test solution.
-var fails_if_instrumentation_fails = true;
-
-console.log('SMART SOLUTION ' + args[2])
-
-if (args.length > 2) {
-	fails_if_instrumentation_fails = args[2]
-	console.log('FAIL IF INSTRUMENTATION FAILS ' + fails_if_instrumentation_fails)
-}
+processInputArgs(args)
 
 console.log('WORKSPACE_PATH: ' + WORKSPACE_PATH)
 console.log('dir ' + __dirname);
@@ -53,6 +56,75 @@ writeStream.write(endBuffer, 'utf-8', function(werr) {
 	});
 
 readWorkspaceJSFileList();
+
+
+/** 
+* Process the input arguments
+*/
+function processInputArgs(args) {
+	var mandatoryArgs = 2
+	for (var i = 0; i < args.length; i++) {
+		if (isArgument(args[i])) {
+			switch (args[i]) {
+			case '--x':	// exclude
+				/** @type {String} */
+				var excludes = args[i+1].split(',')
+				var exclutedFile
+				for (var x = 0; x < excludes.length; x++) {
+					exclutedFile = excludes[x].trim();
+					console.log('exclude ' + exclutedFile)
+					EXCLUDES[exclutedFile] = -1
+				}
+				// utils.stringTrim(textString)
+				break;	
+			case '--e':	// fail is instrumentation fails
+				var value = args[i +1]
+				if (value =='true') {
+					FAIL_IF_INSTRUMENTATION_FAIL = true
+					console.log('FAIL IF INSTRUMENTATION FAILS ' + FAIL_IF_INSTRUMENTATION_FAIL)
+				} else if(value == 'false') {
+					FAIL_IF_INSTRUMENTATION_FAIL = false
+				} else {
+					throw new Error(value +' is not a valid value for argument ' + args[i] + '. value must be true or false ! run node ServoyParser.js --help for help');	
+				}
+				break;
+			case '--t':		// test solution name
+				SMART_SOLUTIONS = args[i+1]
+				// TODO concatenate smart solution names from string list
+				mandatoryArgs--
+				break;
+			case '--d':		// input directory
+				WORKSPACE = args[i+1]
+				TEMP_WORKSPACE = path.resolve(args[i+2]);
+				WORKSPACE_PATH = path.resolve(WORKSPACE);
+				mandatoryArgs--;
+				break;
+			case '--h' :	//show help menu
+				console.log(HELP)
+				return
+				break;
+			default:
+				throw new Error(args[i] +' is not a valid argument !');
+				break;
+			}
+		}
+	}
+	if (mandatoryArgs!=0) {
+		throw new Error('Must specify mandatory arguments --d <output_dir> <input_dir> and --t <test_solution_name>');	
+	}
+}
+
+/**
+ * is string an argument 
+ */
+function isArgument(arg) {
+	if(arg.slice(0,2)=='--') {
+		return true
+	} else {
+		return false;
+	}
+}
+
 
 /**
  * generate a random UUID. Note There is a possibility of fail.
@@ -86,14 +158,19 @@ function getFilesRecursiveSync(dir, fileList, optionalFilterFunction) {
 		if (!files.hasOwnProperty(i)) {
 			continue;
 		}
-		var filePath = dir + '\\' + files[i];
-		if (fs.statSync(filePath).isDirectory()) { // search files in directory
-			// find the path to the test solution
-			if (files[i] == SMART_SOLUTIONS) {
-				smart_solution_path = filePath
-				smart_solution_path = filePath.replace(TEMP_WORKSPACE, WORKSPACE_PATH)
-				console.log('SMART SOLUTION ' + smart_solution_path)
-			}
+		var filePath = dir + '\\' + files[i];		
+
+		// find the path to the test solution
+		if (files[i] == SMART_SOLUTIONS) {
+			smart_solution_path = filePath
+			smart_solution_path = filePath.replace(TEMP_WORKSPACE, WORKSPACE_PATH)
+			console.log('SMART SOLUTION ' + smart_solution_path)
+		}
+		if (isFileExcluted(files[i])) { 	// skip the file or folder if is listed in the excluted files
+			console.log('Skipping excluted file: ' + files[i])
+			continue;
+		}
+		if (fs.statSync(filePath).isDirectory()) { 	// search files in directory
 			if (filePath.substring(filePath.length - 5, filePath.length) == '_test') { // skip _test directories
 				continue;
 			}
@@ -108,7 +185,7 @@ function getFilesRecursiveSync(dir, fileList, optionalFilterFunction) {
 		} else if (fs.statSync(filePath).isFile()) {
 			if (optionalFilterFunction && optionalFilterFunction(filePath) !== true) // filter .js files only
 				continue;
-			fileList.push(filePath); // push files into result object
+			fileList.push(filePath); 	// push files into result object
 			// console.log(filePath)
 		}
 	}
@@ -124,6 +201,14 @@ function isFileTypeJavascript(path) {
 		return false
 	}
 }
+/** 
+ * returns true if the file or folder is incluted in the list of excluted files given by the argument --x
+ */
+function isFileExcluted(fileName) {
+	return EXCLUDES.hasOwnProperty(fileName)
+}
+
+
 /*
  * process all js files.
  *
@@ -183,8 +268,9 @@ function readWorkspaceJSFileList() {
 				extractedContent = extractInstrumentedData(data)
 				parsedContent = removeInstrumentedData(data)
 			} catch (e) {
-				if (fails_if_instrumentation_fails == "true") {
-					throw new Error('The JS file ' + inFilePath + ' is not instrumented.')
+				if (FAIL_IF_INSTRUMENTATION_FAIL) {
+					var errorMsg = 'The JS file ' + inFilePath + ' is not instrumented.'
+					throw new Error(errorMsg)
 				} else {
 					console.log('Skipping not instrumented JS file ' + inFilePath + '.')
 					parsedContent = data;
