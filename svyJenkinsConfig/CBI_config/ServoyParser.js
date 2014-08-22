@@ -35,7 +35,9 @@ when set to true return error if any of the processed file is not instrumented. 
 --t <test_solution_name>\n\
 The name of the test solution\n\n\
 --x "<exclude_folder>[,<exclude_folder>]"\n\
-Exclude folders or files. List all files and folder to be excluded in a strin. Use comma to separate folder or file names.\n'
+Exclude folders or files. List all files and folder to be excluded in a strin. Use comma to separate folder or file names.\n\n\
+--v <true|false>\n\
+verbose logging. set verbose to true to view the log messages during execution\n'
 
 var WORKSPACE
 var TEMP_WORKSPACE								// input directory to parse the file.
