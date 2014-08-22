@@ -46,9 +46,15 @@
 	    <arg value="/c"/>
 		<arg value="node"/>
 	    <arg value="ServoyParser.js"/>
+	    <arg value="--d"/>
 	    <arg value="${INSTRUMENTED_WORKSPACE}"/>
 	    <arg value="${TEMP_INSTRUMENTED_WORKSPACE}"/>
-	  	<arg value="${smart_test_solutions}"/>     
+	    <arg value="--t"/>
+	  	<arg value="${smart_test_solutions}"/>
+	    <arg value="--x"/>
+	  	<arg value="${smart_test_solutions}"/>
+	    <arg value="--e"/>
+	  	<arg value="false"/>
 	  </exec>
 	</target>
 	
