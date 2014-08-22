@@ -55,6 +55,8 @@
 	  	<arg value="${instrument.exclude}"/>
 	    <arg value="--e"/>
 	  	<arg value="${always_fails_if_instrumentation_fails}"/>
+	    <arg value="--v"/>
+	  	<arg value="true"/>
 	  </exec>
 	</target>
 	

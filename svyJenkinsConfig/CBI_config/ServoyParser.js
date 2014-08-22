@@ -23,13 +23,14 @@ var WORKSPACE_PATH 								// ouput directory for the parsed file.
 var SMART_SOLUTIONS								// name of the test solution.
 var EXCLUDES = {}								// list of files to be excluted
 var FAIL_IF_INSTRUMENTATION_FAIL = false;		// return error if processed file is not instrumented
+var VERBOSE = false;
 
 // process and validate the input arguments
 var args = process.argv.slice(2);
 processInputArgs(args)
 
-console.log('WORKSPACE_PATH: ' + WORKSPACE_PATH)
-console.log('dir ' + __dirname);
+log('WORKSPACE_PATH: ' + WORKSPACE_PATH)
+log('dir ' + __dirname);
 var workspaceFilesJS = []; // the list of js files in workspace
 var smart_solution_path;
 
@@ -51,12 +52,20 @@ var endBuffer = new Buffer(endOfFile)
 // write init function in istanbul file
 writeStream.write(endBuffer, 'utf-8', function(werr) {
 		if (werr) {
-			console.log('ERROR WRITING THE FILE ' + werr);
+			log('ERROR WRITING THE FILE ' + werr);
 		}
 	});
 
 readWorkspaceJSFileList();
 
+/**
+ * log verbose messages
+ * */
+function log(msg) {
+	if (VERBOSE) {
+		console.log(msg)
+	}
+}
 
 /** 
 * Process the input arguments
@@ -72,7 +81,7 @@ function processInputArgs(args) {
 				var exclutedFile
 				for (var x = 0; x < excludes.length; x++) {
 					exclutedFile = excludes[x].trim();
-					console.log('exclude ' + exclutedFile)
+					log('exclude ' + exclutedFile)
 					EXCLUDES[exclutedFile] = -1
 				}
 				// utils.stringTrim(textString)
@@ -81,7 +90,7 @@ function processInputArgs(args) {
 				var value = args[i +1]
 				if (value =='true') {
 					FAIL_IF_INSTRUMENTATION_FAIL = true
-					console.log('FAIL IF INSTRUMENTATION FAILS ' + FAIL_IF_INSTRUMENTATION_FAIL)
+					log('FAIL IF INSTRUMENTATION FAILS ' + FAIL_IF_INSTRUMENTATION_FAIL)
 				} else if(value == 'false') {
 					FAIL_IF_INSTRUMENTATION_FAIL = false
 				} else {
@@ -99,8 +108,17 @@ function processInputArgs(args) {
 				WORKSPACE_PATH = path.resolve(WORKSPACE);
 				mandatoryArgs--;
 				break;
+			case '--v':	// fail is instrumentation fails
+				var value = args[i +1]
+				if (value =='true') {
+					VERBOSE = true
+					log('Verbose logging')
+				} else if(value == 'false') {
+					VERBOSE = false
+				}
+				break;
 			case '--h' :	//show help menu
-				console.log(HELP)
+				log(HELP)
 				return
 				break;
 			default:
@@ -144,13 +162,13 @@ function generateUUID() {
  * read all files in directory.
  */
 function getFilesRecursiveSync(dir, fileList, optionalFilterFunction) {
-	//console.log('dir ' + dir + '  resolve ' + path.resolve(dir))
+	//log('dir ' + dir + '  resolve ' + path.resolve(dir))
 	if (!dir) {
-		console.log("Directory 'dir' is undefined or NULL")
+		log("Directory 'dir' is undefined or NULL")
 		return;
 	}
 	if (!fileList) {
-		console.log("Variable 'fileList' is undefined or NULL.");
+		log("Variable 'fileList' is undefined or NULL.");
 		return;
 	}
 	var files = fs.readdirSync(dir);
@@ -164,10 +182,10 @@ function getFilesRecursiveSync(dir, fileList, optionalFilterFunction) {
 		if (files[i] == SMART_SOLUTIONS) {
 			smart_solution_path = filePath
 			smart_solution_path = filePath.replace(TEMP_WORKSPACE, WORKSPACE_PATH)
-			console.log('SMART SOLUTION ' + smart_solution_path)
+			log('SMART SOLUTION ' + smart_solution_path)
 		}
 		if (isFileExcluted(files[i])) { 	// skip the file or folder if is listed in the excluted files
-			console.log('Skipping excluted file: ' + files[i])
+			log('Skipping excluted file: ' + files[i])
 			continue;
 		}
 		if (fs.statSync(filePath).isDirectory()) { 	// search files in directory
@@ -177,7 +195,7 @@ function getFilesRecursiveSync(dir, fileList, optionalFilterFunction) {
 			}
 			// TODO remove jenkinsConfig ?
 			if (filePath.substr(filePath.length - 13, filePath.length) == 'JenkinsConfig') { // skip jenkins config
-				console.log(filePath.substr(filePath.length - 13, filePath.length))
+				log(filePath.substr(filePath.length - 13, filePath.length))
 				continue;
 			}
 			if (files[i]=='medias') {	// skip files in medias folder.
@@ -188,7 +206,7 @@ function getFilesRecursiveSync(dir, fileList, optionalFilterFunction) {
 			if (optionalFilterFunction && optionalFilterFunction(filePath) !== true) // filter .js files only
 				continue;
 			fileList.push(filePath); 	// push files into result object
-			// console.log(filePath)
+			// log(filePath)
 		}
 	}
 }
@@ -219,17 +237,17 @@ function isFileExcluted(fileName) {
  for (var i=0; i<workspaceFilesJS.length; i++) {
  var inFilePath = workspaceFilesJS[i];
  var outFilePath = WORKSPACE_PATH + inFilePath.substring(TEMP_WORKSPACE.length);
- console.log('processing file: ' + outFilePath);
+ log('processing file: ' + outFilePath);
 
  // TODO bad performance. read all file in once.
  // copy the content into a different file.
  fs.readFile(inFilePath, {flags:"r", encoding: 'utf8', mode: 0666}, function (err, data) {
  if (err) {
- return console.log(err)
+ return log(err)
  }
  fs.writeFile(outFilePath, parseData(data), {flags:"w", encoding: 'utf8', mode: 0666}, function (wErr) {
  if(wErr) {
- console.log('ERROR IN WRITE FILE ' + wErr);
+ log('ERROR IN WRITE FILE ' + wErr);
  }
  });
  });
@@ -240,7 +258,7 @@ function isFileExcluted(fileName) {
 function readWorkspaceJSFileList() {
 
 	ticketNumber -= 1;
-	console.log('ticket ' + ticketNumber)
+	log('ticket ' + ticketNumber)
 	if (ticketNumber < 0) {
 		// no more file to be processed
 		return;
@@ -251,17 +269,17 @@ function readWorkspaceJSFileList() {
 	}
 
 	var outFilePath = WORKSPACE_PATH + inFilePath.substring(TEMP_WORKSPACE.length) + '';
-	console.log('processing file: ' + outFilePath);
+	log('processing file: ' + outFilePath);
 
 	// TODO bad performance. read all file in once.
 	// copy the content into a different file.
 	fs.readFile(inFilePath, { flags: "r", encoding: 'utf8', mode: 0666 }, function(err, data) {
 			if (err) {
 				throw new Error(err)
-				//return console.log(err)
+				//return log(err)
 			}
 
-			// console.log('read ' + inFilePath)
+			// log('read ' + inFilePath)
 			var extractedContent, parsedContent;
 			var buffer, fileBuffer;
 
@@ -274,7 +292,7 @@ function readWorkspaceJSFileList() {
 					var errorMsg = 'The JS file ' + inFilePath + ' is not instrumented.'
 					throw new Error(errorMsg)
 				} else {
-					console.log('Skipping not instrumented JS file ' + inFilePath + '.')
+					log('Skipping not instrumented JS file ' + inFilePath + '.')
 					parsedContent = data;
 					extractedContent = "";
 				}
@@ -286,14 +304,14 @@ function readWorkspaceJSFileList() {
 			// 2 write the instrumented variables in a scope file.
 			writeStream.write(buffer, 'utf-8', function(werr) {
 					if (werr) {
-						console.log('ERROR WRITING THE FILE ' + werr);
+						log('ERROR WRITING THE FILE ' + werr);
 					}
-					// console.log('write ')
+					// log('write ')
 					// the last file being parsed should close the writeStrem
 					fileToParseSize -= 1
 					if (fileToParseSize == 0) {
 						// TODO close file
-						console.log('Close the writeStream')
+						log('Close the writeStream')
 						//var endOfFile = '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nfunction initIstanbul() {application.output("init success")}'
 						writeStream.end('')
 					}
@@ -303,18 +321,18 @@ function readWorkspaceJSFileList() {
 			fs.open(outFilePath, "w", "0666", function(oerr, fd) {
 					if (oerr) {
 						throw new Error(oerr)
-						//console.log(err);
+						//log(err);
 						//return;
 					}
-					// console.log('open ' + outFilePath)
+					// log('open ' + outFilePath)
 					fs.write(fd, fileBuffer, 0, fileBuffer.length, null, function(werr) {
 							if (werr) {
 								throw new Error(werr)
-								// console.log('ERROR WRITING THE FILE ' + wErr);
+								// log('ERROR WRITING THE FILE ' + wErr);
 							}
-							// console.log('write ' + outFilePath)
+							// log('write ' + outFilePath)
 							fs.close(fd, function() {
-									// console.log("completed " + outFilePath)
+									// log("completed " + outFilePath)
 								})
 						});
 				});
@@ -322,7 +340,7 @@ function readWorkspaceJSFileList() {
 			//writeStream.end()
 			//                              fs.writeFile(fd, parseData(data), {flags:"w", encoding: 'utf8',mode: 0666}, function (wErr) {
 			//                                      if(wErr) {
-			//                                              console.log('ERROR IN WRITE FILE ' + wErr);
+			//                                              log('ERROR IN WRITE FILE ' + wErr);
 			//                                      }
 			//                              });
 
