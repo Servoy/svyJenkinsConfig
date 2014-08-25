@@ -12,9 +12,9 @@
 		<script language="javascript">
 	    var before = project.getProperty("code.analysis.exclude");
 		before =  before.replaceAll(", ", ",")
-	    project.setProperty("code.analysis.exclude.list", before.replaceAll(",", "\b|\b"));
+	    project.setProperty("code.analysis.exclude.list", before.replaceAll(",", "\\b|\\b"));
 		</script>
-		<echo>plato exclude files=${code.analysis.exclude.list}</echo>
+		<echo>plato exclude files=\b${code.analysis.exclude.list}\b\|\bmedias\b</echo>
 	</target>
 	
 	<!-- create a code analysis report using plato-->
