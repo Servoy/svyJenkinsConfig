@@ -6,17 +6,25 @@
     <property file="export_and_test_personal.properties"/>
     <property file="export_and_test.properties"/>
 
-	<target name="code_analysis" depends= "execute_plato_for_code_analysis"/>
+	<target name="code_analysis" if="make_code_analysis_report" depends= "parse_plato_exclude_files, execute_plato_for_code_analysis"/>
+
+	<target name="parse_plato_exclude_files" if="make_code_analysis_report">
+		<script language="javascript">
+	    var before = project.getProperty("code.analysis.exclude");
+	    project.setProperty("code.analysis.exclude.list", before.replaceAll(",", "|"));
+		</script>
+		<echo>plato exclude files=${code.analysis.exclude.list}</echo>
+	</target>
 	
 	<!-- create a code analysis report using plato-->
-	<target name="execute_plato_for_code_analysis" if="make_code_analysis_report">
+	<target name="execute_plato_for_code_analysis" if="make_code_analysis_report" depends="parse_plato_exclude_files">
 	  <echo level="info" message="code analysis of ${PLATO_INPUT_DIRECTORY} into output dir ${PLATO_OUTPUT_DIRECTORY}"/>
 	  <exec dir="${WORKSPACE}" executable="cmd" failonerror="${always_fails_if_code_analysis_fails}">
 	    <arg value="/c"/>
 		<arg value="plato"/>
 	    <arg value="-r"/>
 	  	<arg value="-x"/>
-	  	<arg value='"media"'/>
+	  	<arg value='"${code.analysis.exclude.list}|media"'/>
 	    <arg value="-d"/>
 		<arg value="${PLATO_OUTPUT_DIRECTORY}"/>
 	    <arg value="${PLATO_INPUT_DIRECTORY}"/>
