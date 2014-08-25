@@ -11,7 +11,7 @@
 	<target name="parse_plato_exclude_files" if="make_code_analysis_report">
 		<script language="javascript">
 	    var before = project.getProperty("code.analysis.exclude");
-	    project.setProperty("code.analysis.exclude.list", before.replaceAll(",", "\b|"));
+	    project.setProperty("code.analysis.exclude.list", before.replaceAll(",", "\b|\b"));
 		</script>
 		<echo>plato exclude files=${code.analysis.exclude.list}</echo>
 	</target>
