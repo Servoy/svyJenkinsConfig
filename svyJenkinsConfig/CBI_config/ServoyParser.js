@@ -45,8 +45,8 @@ var WORKSPACE
 var TEMP_WORKSPACE								// input directory to parse the file.
 var WORKSPACE_PATH 								// ouput directory for the parsed file.
 var SMART_SOLUTIONS								// name of the test solution.
-var EXCLUDES = {}								// list of files to be excluted
-var INCLUDES = {}								// all included folder
+var EXCLUDES									// list of files to be excluted
+var INCLUDES									// all included folder
 var FAIL_IF_INSTRUMENTATION_FAIL = false;		// return error if processed file is not instrumented
 var VERBOSE = false;
 
@@ -101,12 +101,20 @@ function processInputArgs(args) {
 		if (isArgument(args[i])) {
 			switch (args[i]) {
 			case '--x':	// exclude
+				if (!args[i+i] || isArgument(args[i+i])) {
+					log("WARN: must specify a list of folder names after option --x. Exclude will be ignored")
+					break;
+				}
 				/** @type {String} */
 				var excludes = args[i+1].split(',')
 				var exclutedFile
 				for (var x = 0; x < excludes.length; x++) {
 					exclutedFile = excludes[x].trim();
 					log('exclude ' + exclutedFile)
+					if (!EXCLUDES) {
+						log('init exclude')
+						EXCLUDES = {}
+					}
 					EXCLUDES[exclutedFile] = -1
 				}
 				// utils.stringTrim(textString)
@@ -123,12 +131,20 @@ function processInputArgs(args) {
 				}
 				break;
 			case '--i':		// include arguments
+				if (!args[i+i] || isArgument(args[i+i])) {
+					log("WARN: must specify a list of folder names after option --i. Include will be ignored")
+					break;
+				}
 				/** @type {String} */
 				var includes = args[i+1].split(',')
 				var inclutedFile
 				for (var x = 0; x < includes.length; x++) {
 					inclutedFile = includes[x].trim();
 					log('include ' + inclutedFile)
+					if (!INCLUDES) {
+					log('init includes')
+						INCLUDES = {}
+					}
 					INCLUDES[inclutedFile] = -1
 				}
 				break;
@@ -171,6 +187,9 @@ function processInputArgs(args) {
  * is string an argument 
  */
 function isArgument(arg) {
+	if (!arg) {
+		return false;
+	}
 	if(arg.slice(0,2)=='--') {
 		return true
 	} else {
@@ -264,6 +283,9 @@ function isFileTypeJavascript(path) {
  * returns true if the file or folder is incluted in the list of excluted files given by the argument --x
  */
 function isFileExcluted(fileName) {
+	if (!EXCLUDES) {
+		return false;
+	}
 	return EXCLUDES.hasOwnProperty(fileName)
 }
 
@@ -271,6 +293,9 @@ function isFileExcluted(fileName) {
  * returns true if the folder is incluted in the list of incluted files given by the argument --i
  */
 function isFileIncluted(filePath) {
+	if (!INCLUDES) {
+		return true
+	}
 	var paths = filePath.split('\\')
 	for (var i =0; i < paths.length; i++) {
 		if (INCLUDES.hasOwnProperty(paths[i])) {
