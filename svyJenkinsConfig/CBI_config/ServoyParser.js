@@ -101,7 +101,7 @@ function processInputArgs(args) {
 		if (isArgument(args[i])) {
 			switch (args[i]) {
 			case '--x':	// exclude
-				if (!args[i+1] || isArgument(args[i+1]) || arg[i+1] == "{instrument.exclude.modules}") {
+				if (!args[i+1] || isArgument(args[i+1]) || args[i+1] == "{instrument.exclude.modules}") {
 					log("WARN: must specify a list of folder names after option --x. Exclude will be ignored")
 					break;
 				}
@@ -131,7 +131,7 @@ function processInputArgs(args) {
 				}
 				break;
 			case '--i':		// include arguments
-				if (!args[i+1] || isArgument(args[i+1]) || arg[i+1] == "{instrument.include.modules}") {
+				if (!args[i+1] || isArgument(args[i+1]) || args[i+1] == "{instrument.include.modules}") {
 					log("WARN: must specify a list of folder names after option --i. Include will be ignored")
 					break;
 				}
