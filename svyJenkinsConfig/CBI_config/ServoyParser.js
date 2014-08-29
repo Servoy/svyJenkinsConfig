@@ -101,7 +101,7 @@ function processInputArgs(args) {
 		if (isArgument(args[i])) {
 			switch (args[i]) {
 			case '--x':	// exclude
-				if (!args[i+i] || isArgument(args[i+i])) {
+				if (!args[i+1] || isArgument(args[i+1])) {
 					log("WARN: must specify a list of folder names after option --x. Exclude will be ignored")
 					break;
 				}
@@ -131,7 +131,7 @@ function processInputArgs(args) {
 				}
 				break;
 			case '--i':		// include arguments
-				if (!args[i+i] || isArgument(args[i+i])) {
+				if (!args[i+1] || isArgument(args[i+1])) {
 					log("WARN: must specify a list of folder names after option --i. Include will be ignored")
 					break;
 				}
@@ -297,7 +297,7 @@ function isFileIncluted(filePath) {
 		return true
 	}
 	var paths = filePath.split('\\')
-	for (var i =0; i < paths.length; i++) {
+	for (var i = WORKSPACE_PATH.split('\\').length; i < paths.length; i++) {
 		if (INCLUDES.hasOwnProperty(paths[i])) {
 			return true;
 		}
