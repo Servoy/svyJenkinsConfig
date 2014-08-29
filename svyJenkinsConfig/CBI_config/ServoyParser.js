@@ -34,8 +34,10 @@ mandatory argument! Parse file from directory tree <input_dir> and save parsed f
 when set to true return error if any of the processed file is not instrumented. Default is false\n\n\
 --t <test_solution_name>\n\
 The name of the test solution\n\n\
+--i "<include_folder>[,<include_folder>]"\n\
+include folders. List all folder to be included in a string. Use comma to separate folder names.\n\n\
 --x "<exclude_folder>[,<exclude_folder>]"\n\
-Exclude folders or files. List all files and folder to be excluded in a strin. Use comma to separate folder or file names.\n\n\
+Exclude folders or files. List all files and folder to be excluded in a string. Use comma to separate folder or file names.\n\n\
 --v <true|false>\n\
 verbose logging. set verbose to true to view the log messages during execution\n'
 
@@ -44,6 +46,7 @@ var TEMP_WORKSPACE								// input directory to parse the file.
 var WORKSPACE_PATH 								// ouput directory for the parsed file.
 var SMART_SOLUTIONS								// name of the test solution.
 var EXCLUDES = {}								// list of files to be excluted
+var INCLUDES = {}								// all included folder
 var FAIL_IF_INSTRUMENTATION_FAIL = false;		// return error if processed file is not instrumented
 var VERBOSE = false;
 
@@ -119,10 +122,20 @@ function processInputArgs(args) {
 					throw new Error(value +' is not a valid value for argument ' + args[i] + '. value must be true or false ! run node ServoyParser.js --help for help');	
 				}
 				break;
+			case '--i':		// include arguments
+				/** @type {String} */
+				var includes = args[i+1].split(',')
+				var inclutedFile
+				for (var x = 0; x < includes.length; x++) {
+					inclutedFile = includes[x].trim();
+					log('include ' + inclutedFile)
+					INCLUDES[inclutedFile] = -1
+				}
+				break;
 			case '--t':		// test solution name
 				SMART_SOLUTIONS = args[i+1]
 				// TODO concatenate smart solution names from string list
-				mandatoryArgs--
+				mandatoryArgs--;
 				break;
 			case '--d':		// input directory
 				WORKSPACE = args[i+1]
@@ -227,6 +240,10 @@ function getFilesRecursiveSync(dir, fileList, optionalFilterFunction) {
 		} else if (fs.statSync(filePath).isFile()) {
 			if (optionalFilterFunction && optionalFilterFunction(filePath) !== true) // filter .js files only
 				continue;
+			if (!isFileIncluted(filePath)) {	// if one of parent directory of file is not in INCLUDED list skip the file
+				log('file ' + filePath + ' is not in the incluted list')
+				continue;
+			}
 			fileList.push(filePath); 	// push files into result object
 			// log(filePath)
 		}
@@ -250,6 +267,18 @@ function isFileExcluted(fileName) {
 	return EXCLUDES.hasOwnProperty(fileName)
 }
 
+/** 
+ * returns true if the folder is incluted in the list of incluted files given by the argument --i
+ */
+function isFileIncluted(filePath) {
+	var paths = filePath.split('\\')
+	for (var i =0; i < paths.length; i++) {
+		if (INCLUDES.hasOwnProperty(paths[i])) {
+			return true;
+		}
+	}
+	return false
+}
 
 /*
  * process all js files.
