@@ -101,7 +101,7 @@ function processInputArgs(args) {
 		if (isArgument(args[i])) {
 			switch (args[i]) {
 			case '--x':	// exclude
-				if (!args[i+1] || isArgument(args[i+1]) || args[i+1] == "{instrument.exclude.modules}") {
+				if (!args[i+1] || isArgument(args[i+1]) || args[i+1] == "${instrument.exclude.modules}") {
 					log("WARN: must specify a list of folder names after option --x. Exclude will be ignored")
 					break;
 				}
@@ -110,11 +110,11 @@ function processInputArgs(args) {
 				var exclutedFile
 				for (var x = 0; x < excludes.length; x++) {
 					exclutedFile = excludes[x].trim();
-					log('exclude ' + exclutedFile)
 					if (!EXCLUDES) {
 						log('init exclude')
 						EXCLUDES = {}
 					}
+					log('exclude ' + exclutedFile)
 					EXCLUDES[exclutedFile] = -1
 				}
 				// utils.stringTrim(textString)
@@ -131,20 +131,20 @@ function processInputArgs(args) {
 				}
 				break;
 			case '--i':		// include arguments
-				if (!args[i+1] || isArgument(args[i+1]) || args[i+1] == "{instrument.include.modules}") {
+				if (!args[i+1] || isArgument(args[i+1]) || args[i+1] == "${instrument.include.modules}") {
 					log("WARN: must specify a list of folder names after option --i. Include will be ignored")
 					break;
 				}
 				/** @type {String} */
 				var includes = args[i+1].split(',')
 				var inclutedFile
-				for (var x = 0; x < includes.length; x++) {
-					inclutedFile = includes[x].trim();
-					log('include ' + inclutedFile)
+				for (var j = 0; j < includes.length; j++) {
+					inclutedFile = includes[j].trim();
 					if (!INCLUDES) {
 					log('init includes')
 						INCLUDES = {}
 					}
+					log('include ' + inclutedFile)
 					INCLUDES[inclutedFile] = -1
 				}
 				break;
