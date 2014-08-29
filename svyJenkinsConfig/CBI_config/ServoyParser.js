@@ -141,7 +141,7 @@ function processInputArgs(args) {
 				break;
 			case '--h' :	//show help menu
 				log(HELP)
-				return
+				process.exit(1)
 				break;
 			default:
 				throw new Error(args[i] +' is not a valid argument !');
