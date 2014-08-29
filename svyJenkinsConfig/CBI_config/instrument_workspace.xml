@@ -53,12 +53,12 @@
 	  	<arg value="${instrument.test_solutions}"/>
 	    <arg value="--x"/>
 	  	<arg value="${instrument.exclude}"/>
-	    <arg value="--i"/>
-	  	<arg value="${instrument.include}"/>
 	    <arg value="--e"/>
 	  	<arg value="${always_fails_if_instrumentation_fails}"/>
 	    <arg value="--v"/>
 	  	<arg value="true"/>
+	    <arg value="--i"/>
+	  	<arg value="${instrument.include}"/>
 	  </exec>
 	</target>
 	
