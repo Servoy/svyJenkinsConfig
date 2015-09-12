@@ -3,7 +3,6 @@
 <!-- Works with Ant 1.7.0 and higher -->
 <project basedir=".">
 
-    <property file="export_and_test_personal.properties"/>
     <property file="export_and_test.properties"/>
 
 	<target name="code_analysis" if="make_code_analysis_report" depends= "parse_plato_exclude_files, execute_plato_for_code_analysis"/>
@@ -31,4 +30,5 @@
 	    <arg value="${PLATO_INPUT_DIRECTORY}"/>
 	  </exec>
 	</target>
+	
 </project>

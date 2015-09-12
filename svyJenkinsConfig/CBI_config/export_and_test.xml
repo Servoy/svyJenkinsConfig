@@ -3,7 +3,6 @@
 <!-- Works with Ant 1.7.0 and higher -->
 <project basedir=".">
 
-    <property file="export_and_test_personal.properties"/>
     <property file="export_and_test.properties"/>
 	
 	<condition property="servoy.workspace.export" value="${INSTRUMENTED_WORKSPACE}" else="${WORKSPACE}">
