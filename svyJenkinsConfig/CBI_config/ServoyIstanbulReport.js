@@ -10,12 +10,11 @@ var DIR_REPORT_COVERAGE = 'report_coverage'
 
 var args = process.argv.slice(2);
 if (args.length == 1) {
-	console.log(args[0])
 	DIR_REPORT_COVERAGE = path.resolve(args[0])
 } 
 
-console.log('DIR_TEST_SOLUTION ' + DIR_TEST_SOLUTION)
-console.log('DIR_REPORT_COVERAGE ' + DIR_REPORT_COVERAGE)
+console.log('Code Coverage Test Solution directory ' + DIR_TEST_SOLUTION)
+console.log('Code Coverage Report directory: ' + DIR_REPORT_COVERAGE)
 
 // create a js file having the onCloseMethod.
 // attach UUID of onClose to solution_settings.obj
@@ -152,7 +151,6 @@ function onSolutionClose(force) {\n\
 	return wrappedMethod;
 }
 
-
 function resolveWindowsPath(dir) {
 	if(dir.search('\\')==-1) {
 		console.log('path resolved ' + dir)
@@ -162,7 +160,6 @@ function resolveWindowsPath(dir) {
 	}
 	return resolveWindowsPath(dir)
 }
-
 
 /** 
  * parse the content of the file. Return the parsed content.
