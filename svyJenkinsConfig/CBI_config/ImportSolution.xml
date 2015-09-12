@@ -30,7 +30,7 @@
 		<exec executable="cmd" failonerror="true">
 			<arg value="/c"/>
 			<arg value="node"/>
-			<arg value="ServoyImportSolution.js"/>
+			<arg value="ServoySolutionImporter.js"/>
 			<arg value="${servoy_app_server_url}"/>
 			<arg value="${import_solution_name}"/>
 			<arg value="${admin_page_user_name}"/>
