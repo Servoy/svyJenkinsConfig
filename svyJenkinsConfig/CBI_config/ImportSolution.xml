@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+
+<!-- Works with Ant 1.7.0 and higher -->
+<project basedir=".">
+	<!--
+	Exports a solution to a .servoy file from the workspace 
+	and then uploads it to a (remote) Servoy App Server through a post on the Servoy Admin page.
+	
+	This ANT tasks requires the following parameters to be set:
+	- servoy_app_server_url: f.e. http://www.mycompany.com:8080
+	- import_solution_name: f.e. MyCRM
+	- admin_page_user_name: username to log into the Servoy Admin page
+	- admin_page_password: password for the user to log into the Servoy Admin page
+	- smart.test.exports.dir
+	- servoy.workspace.export
+	- servoy.app_server.dir
+	- servoy.test.property.file
+	-->
+    <import file="export_and_test.xml"/>
+
+	<target name="import_solution_on_remote_servoy_server" depends="get_equinox_jar, export_solution_for_import, import_solution"/>
+
+	<!-- Create .servoy file -->
+	<target name="export_solution_for_import">
+		<export-solution solutionNames="${import_solution_name}"/>
+	</target>
+	
+	<!-- Import .servoy file on remote server -->
+	<target name="import_solution" depends="export_solution_for_import">
+		<exec executable="cmd" failonerror="true">
+			<arg value="/c"/>
+			<arg value="node"/>
+			<arg value="ServoyImportSolution.js"/>
+			<arg value="${servoy_app_server_url}"/>
+			<arg value="${import_solution_name}"/>
+			<arg value="${admin_page_user_name}"/>
+			<arg value="${admin_page_password}"/>
+		</exec>
+	</target>
+	
+</project>
