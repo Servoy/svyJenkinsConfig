@@ -8,7 +8,7 @@ Documentation
 See the [Wiki](https://wiki.servoy.com/display/DOCS/Using+Istanbul+to+integrate+code+coverage+report+in+Jenkins) for the available documentation
 
 To enable code coverage with Istanbul the test solutions must save the coverage result into the coverage.json file during the onSolutionClose of the test solution.
-See sample code in the (svyUtils feature/jenkins)[https://github.com/Servoy/svyUtils/blob/feature/jenkins/svyUtils_test/svyUtils_test.js]
+See sample code in the [svyUtils feature/jenkins](https://github.com/Servoy/svyUtils/blob/feature/jenkins/svyUtils_test/svyUtils_test.js)
 
 Feature Requests & Bugs
 -----------------------
