@@ -1,15 +1,14 @@
 svyJenkinsConfig
 ========
 'svyJenkinsConfig' is a module of the Servoy Business Application Platform. It provides a build.xml file which can be used in the Jenkins build process of Servoy test solutions.
-The build.xml is configured for code instrumentation with istanbul code coverage.
+The build.xml is configured for code instrumentation with Istanbul code coverage and Plato code analysis.
 
 Documentation
 -------------
 See the [Wiki](https://wiki.servoy.com/display/DOCS/Using+Istanbul+to+integrate+code+coverage+report+in+Jenkins) for the available documentation
 
-Note: some configurations property described in the wiki are available only in the [develop](https://github.com/Servoy/svyJenkinsConfig/tree/develop) branch.
-
-The master branch is not configured to use Plato. Checkout the [develop](https://github.com/Servoy/svyJenkinsConfig/tree/develop) branch to use Plato for code analysis.
+To enable code coverage with Istanbul the test solutions must save the coverage result into the coverage.json file during the onSolutionClose of the test solution.
+See sample code in the [svyUtils feature/jenkins][https://github.com/Servoy/svyUtils/blob/feature/jenkins/svyUtils_test/svyUtils_test.js]
 
 Feature Requests & Bugs
 -----------------------
