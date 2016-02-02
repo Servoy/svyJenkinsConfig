@@ -440,7 +440,7 @@ function extractInstrumentedData(data) {
 		var RIGHT_CONTENT = ".js'];"
 		//extractedData = extractedData.replace(RIGHT_CONTENT, "})();\n" + RIGHT_CONTENT);
 		extractedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + extractedData;
-		var methodID = generateUUID()
+		var methodID = generateUUID();
 		extractedData = extractedData.replace(LEFT_CONTENT, '\n/**\n * @properties={typeid:35,uuid:"' + methodID + '"} \n */\nvar istanbul_init_' + methodID.substring(0, 8) + ' = (function (){ ' + LEFT_CONTENT)
 		extractedData = extractedData + "})();\n\n";
 		return extractedData
@@ -495,6 +495,7 @@ function removeInstrumentedData(data) {
 		var parsedData = data;
 		parsedData = parsedData.replace(RIGHT_CONTENT,  RIGHT_CONTENT + "})();\n");
 		parsedData = '/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */' + parsedData;
+		// FIXME cannot add same var istanbul_init on multiple .globals file.
 		parsedData = parsedData.replace(LEFT_CONTENT, '\n/**\n * @properties={typeid:35,uuid:"' + generateUUID() + '"} \n */\nvar istanbul_init = (function (){ ' + LEFT_CONTENT)
 		return parsedData
 	} else {
