@@ -1,7 +1,9 @@
 svyJenkinsConfig
 ========
 'svyJenkinsConfig' is a module of the Servoy Business Application Platform. It provides a build.xml file which can be used in the Jenkins build process of Servoy test solutions.
+
 The build.xml is configured for code instrumentation with Istanbul code coverage and Plato code analysis.
+
 
 Documentation
 -------------
